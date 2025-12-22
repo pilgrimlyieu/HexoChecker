@@ -14,7 +14,7 @@ class TestHexoResolver:
     @pytest.fixture
     def resolver(self) -> HexoResolver:
         """创建解析器实例"""
-        return HexoResolver(post_dir="_posts", asset_folder_per_post=True)
+        return HexoResolver(post_dir=["_posts"], asset_folder_per_post=True)
 
     @pytest.fixture
     def context(self, tmp_path: Path, resolver: HexoResolver) -> CheckContext:

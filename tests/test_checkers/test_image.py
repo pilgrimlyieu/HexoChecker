@@ -197,7 +197,7 @@ class TestImageCheckerWithHexo:
     @pytest.fixture
     def hexo_context(self, tmp_path: Path) -> CheckContext:
         """创建 Hexo 检查上下文"""
-        resolver = HexoResolver(post_dir="_posts", asset_folder_per_post=True)
+        resolver = HexoResolver(post_dir=["_posts"], asset_folder_per_post=True)
         config = Config(root=tmp_path, resolver=resolver)
         (tmp_path / "_posts").mkdir()
         return CheckContext(root=tmp_path, config=config, resolver=resolver)

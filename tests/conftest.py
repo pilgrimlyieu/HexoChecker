@@ -58,7 +58,7 @@ def default_resolver() -> DefaultResolver:
 def hexo_resolver() -> HexoResolver:
     """Hexo 路径解析器"""
     return HexoResolver(
-        post_dir="_posts",
+        post_dir=["_posts"],
         asset_folder_per_post=True,
     )
 
