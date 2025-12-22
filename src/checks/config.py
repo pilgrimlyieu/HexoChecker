@@ -112,13 +112,8 @@ class Config:
 def load_config(config_path: Path | str | None = None) -> tuple[Config, Path]:
     """加载配置文件
 
-    查找顺序：
-    1. 指定的配置文件路径
-    2. 当前目录的 checks_config.py
-    3. 向上递归查找 checks_config.py
-
     Args:
-        config_path: 配置文件路径（可选）
+        config_path: 配置文件路径（可选），未指定时使用工具目录下的配置文件
 
     Returns:
         (配置对象, 配置文件所在目录)
@@ -136,10 +131,12 @@ def load_config(config_path: Path | str | None = None) -> tuple[Config, Path]:
         if not config_file.exists():
             raise FileNotFoundError(f"Config file not found: {config_path}")
     else:
-        config_file = _find_config_file()
+        config_file = _get_default_config_file()
         if not config_file:
-            # 没有找到配置文件，使用默认配置
-            return Config(), Path.cwd()
+            raise FileNotFoundError(
+                "No config file found. Please create checks_config.py in the tool directory "
+                "or specify one with --config/-c"
+            )
 
     config_file = config_file.resolve()
     config_dir = config_file.parent
@@ -168,17 +165,10 @@ def load_config(config_path: Path | str | None = None) -> tuple[Config, Path]:
     return config, config_dir
 
 
-def _find_config_file() -> Path | None:
-    """向上递归查找配置文件"""
-    current = Path.cwd()
-
-    while True:
-        config_file = current / "checks_config.py"
-        if config_file.exists():
-            return config_file
-
-        parent = current.parent
-        if parent == current:
-            # 已到达根目录
-            return None
-        current = parent
+def _get_default_config_file() -> Path | None:
+    """获取默认配置文件（工具目录下的 checks_config.py）"""
+    tool_root = Path(__file__).parent.parent.parent
+    config_file = tool_root / "checks_config.py"
+    if config_file.exists():
+        return config_file
+    return None
